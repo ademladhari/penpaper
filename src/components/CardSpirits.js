@@ -1,81 +1,92 @@
-import React, { useState } from 'react';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { db } from '../util/FireBase';
+import { FaPlus } from 'react-icons/fa';
+import OtherCharacterDetails from '../util/GetAlldata';
 
 function SkillsAndSpells() {
-  const [items, setItems] = useState([
-    {
-      name: 'Item 1',
-      lvl: 5,
-      amount: 2+"/5",
-      type: 'bhyl',
-      element: 'fire',
-      damage: 0.5,
-      'hit chance': '20%',
-      counter: '2/5 per week',
-      effect:
-        'IncrwerIncrease powerIncreases attack powerIncreases attack powerIncreases attack powerIncreases attack power.',
-    },
-    {
-      name: 'Item 2',
-      lvl: 8,
-      amount: 3+"/6",
-      type: 'adzad',
-      element: 'ace',
-      damage: 1.2,
-      'hit chance': '15%',
-      counter: '1/5 per fight',
-      effect: 'Boosts magical abilities.',
-    },
-    {
-      name: 'Item 3',
-      lvl: 4,
-      amount: 2+"/4",
-      type: 'gical',
-      element: 'kce',
-      damage: 0.2,
-      'hit chance': '1%',
-      counter: '4/5 per day ',
-      effect: 'Boosts magical abilities.',
-    },
-    {
-      name: 'Item 4',
-      lvl: 3,
-      amount: 1+"/3",
-      type: 'cgical',
-      element: 'fce',
-      damage: 1.4,
-      'hit chance': '1%',
-      counter: '4/5 per week',
-      effect: 'Boosts magical abilities.',
-    },
-    {
-      name: 'Item 5',
-      lvl: 1,
-      amount: 1+"/5",
-      type: 'cgical',
-      element: 'dcccc',
-      damage: 2,
-      'hit chance': '6%',
-      counter: '3/5 per day',
-      effect: 'Boosts magical abilities.',
-    },
-  ]);
-  
-
-
-
-
-  ;
-  const handleUsagesClick = (index) => {
-    const updatedItems = [...items];
-    const usages = updatedItems[index].amount; 
-    const [used] = usages.split('/')[0].split(' ').map((value) => parseInt(value));
-    if (used > 0) {
-      updatedItems[index].amount = `${used - 1}`+updatedItems[index].amount.slice(1);
-      setItems(updatedItems);
-    }
-  };
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const [SearchData,setSearchData]=useState([])
+  const [hide,setHide]= useState(false)
+  const [searchQueryCard, setSearchQueryCard] = useState('');
+  const [cardSpirits, setcardSpirits] = useState([])
   const [sorting, setSorting] = useState({ key: '', direction: 'asc' });
+  const location = useLocation();
+  useEffect(() => {
+    // Scroll to the top of the page whenever the route changes
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+  /////////////////////////////////get data
+  OtherCharacterDetails({setCharacterData:setSearchData,collection:'Spirits',collection2:'CardSpirits'})
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userRef = doc(db, 'database', 'player1', 'spirits', 'cardSpirits');
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const newData = userSnap.data();
+          setcardSpirits(newData.data);
+        } else {
+          console.log('Document does not exist');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+    },[])
+
+useEffect(()=>{
+  if (cardSpirits!==undefined){
+
+  setIsLoading(true)
+  }
+},[cardSpirits])
+
+
+  
+//////////////////////////////////////////end of fetch
+
+const handleUsagesClick = async (index) => {
+  try {
+    const userRef = doc(db, 'database', 'player1', 'spirits', 'cardSpirits');
+    const userSnap = await getDoc(userRef);
+
+    const updatedCardSpirits = [...userSnap.data().data];
+    const updatedItem = { ...updatedCardSpirits[index] }; // Create a shallow copy
+
+    // Update the "amount" property of the selected item
+    updatedItem.amount = Math.max(0, updatedItem.amount - 1); // You can adjust the logic here as needed
+  
+    // Update the state with the new data
+    const newCardSpirits = [...updatedCardSpirits];
+    newCardSpirits[index] = updatedItem;
+    setcardSpirits(newCardSpirits);
+    console.log(newCardSpirits)
+
+    // Update the data in Firestore
+
+    await updateDoc(userRef, { data: newCardSpirits });
+
+    // Now the "amount" value in the database has been update
+  } catch (error) {
+    console.error('Error updating data:', error);
+  }
+};
+const filteredItemsCard = Object.keys(SearchData).length >0
+  ?
+   SearchData.data.filter((item) => {
+ 
+      // You can customize the search criteria here.
+      const itemText = `${item.name} `.toLowerCase();
+      return itemText.includes(searchQueryCard.toLowerCase());
+    })
+  : [];
+
+
 
   const toggleSorting = (key) => {
     console.log(key)
@@ -88,30 +99,93 @@ function SkillsAndSpells() {
       setSorting({ key, direction: 'asc' });
     }
   }
-  const resetUsages = () => {
-    const updatedItems = items.map((item) => {
-        const total = parseInt(item.amount.split('/')[1].trim());
-        item.amount = `${total}/${total}`;
- 
-      return item;
-    });
-    setItems(updatedItems);
-  };
-  const sortedItems = [...items].sort((a, b) => {
-    const key = sorting.key;
-    const direction = sorting.direction === 'asc' ? 1 : -1;
-    if (key === 'lvl' || key=== "damage" ) {
-      
-      return (a[key] - b[key]) * direction;
-     }else {
-     
-      return a[key] < b[key] ? -1 * direction : 1 * direction;
+  const userRef = doc(db, 'database', 'player1', 'spirits', 'cardSpirits');
+  const resetUsages = async () => {
+    if (!isLoading) return;
+
+    try {
+      const resetData = cardSpirits.map((item) => {
+        // Reset the "amount" property of each item to its original value (e.g., item.maxamount)
+        return { ...item, amount: item.maxamount };
+      });
+
+      // Update the state with the new data
+      setcardSpirits(resetData);
+    
+      // Update the data in Firestore
+      await updateDoc(userRef, { data: resetData });
+
+      // Now all "amount" values in the database have been reset
+    } catch (error) {
+      console.error('Error resetting usages:', error);
     }
-  });
+  };
+
+  
+  const handleSearchChangeCard = (event) => {
+    setSearchQueryCard(event.target.value);
+  };
+ const handleAddData=(item)=>{
+  const updatedItems = [...cardSpirits, item];
+  setcardSpirits(updatedItems)
+  updateDoc(userRef, { data: updatedItems })
+ }
   return (
     <div className="h-auto bg-[#D6E6F6] flex">
-      <div className="bg-[#263895] m-auto w-[85%] mt-[2%] rounded-[2%] mb-[5%]   h-[1700px]">
-        <div className="bg-[#798EC8] m-[2%] h-[93%] rounded-[2%]   ">
+      <div className="bg-[#263895] m-auto w-[85%] mt-[2%] rounded-[2%] mb-[3%] h-[1800px]">
+      <div className="bg-[#798EC8] m-[2%] h-[96%] rounded-[2%] pb-[2%]    ">
+      {hide && (
+            <div className="absolute top-1/4  left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-3 bg-yellow-400 rounded-lg   shadow-xl  md:w-2/3 lg:w-1/2"  >
+                <div className='w-[100%] h-[100%] p-4 border-8 rounded-lg border-[white]' style={{ boxSizing: 'border-box'  }}>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setHide(false)}
+                  className="bg-[#263895] hover:bg-red-600 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center"
+                >
+                  X
+                </button>
+              </div>
+
+              <div className="mt-4">
+                <input
+                  type="search"
+                  className="w-full px-4 py-2 text-xl bg-[#D6E6F6] text-black placeholder-text-black font-semibold rounded-3xl"
+                  placeholder="Search ..."
+                  value={searchQueryCard}
+                  onChange={   
+                    handleSearchChangeCard }
+                />
+              </div>
+
+              <div className="mt-4 h-60 overflow-y-auto scrollbar scrollbar-thumb-yellow scrollbar-track-gray-300">
+            
+              {filteredItemsCard.map((item) => (
+        <div
+        key={item}
+        onClick={() => {
+          handleAddData(item);
+        }}
+        className={`max-h-[48%] flex  overflow-hidden   cursor-pointer hover:bg-gray-100 rounded-lg ${
+          item.effect.length > 200 ? 'large-padding' : 'normal-padding'
+        }`}
+      >
+        <div className="w-1/6 h-12 flex items-center pl-[1%]  rounded-md bg-[#263895] text-white mr-[2%] overflow-hidden">
+          {item.name}
+        </div>
+        <div
+          className={`w-5/6 h-[10%] break-words scrollbar    ${
+            item.effect.length > 200 ? 'large-padding-content' : 'normal-padding-content'
+          }`}
+        > 
+        {item.effect}
+        
+          </div>
+        </div>
+      ))}
+              </div>
+            </div>
+            </div>
+          )}
           <div className="flex h-[10%] justify-between">
             <h1 className="text-7xl p-[2%]   ">Card Spirits</h1>
             <input
@@ -120,10 +194,10 @@ function SkillsAndSpells() {
               placeholder="Search .."
             />
           </div>
-          <details class="dropdown absolute left-[80%]" 
+          <div class="dropdown absolute pt-[50%] left-[90%]" 
           onClick={resetUsages}> 
-  
-      </details>
+Reset
+      </div>
       <div className="skillsandspells pl-[3%] pr-[1.5%] pb-[1%] ">
   <div className="text-xl font-semibold">Name</div>
   <div  
@@ -163,17 +237,22 @@ function SkillsAndSpells() {
 </div>
 
 <div className="overflow-scroll h-[75%] overflow-x-hidden scrollbar">
-{sortedItems.map((item, index) => (
+{isLoading ? 
+
+(cardSpirits.map((item, index) => (
+  
   <div key={index} className="skillsandspells pl-[3%]">
+  
+   
     <div className="text-xl"> {item.name}</div>
     <div className="text-xl"> {item.lvl}</div>
     <div className="text-xl cursor-pointer"
                  onClick={() => handleUsagesClick(index)}
-                 title={`Click to reduce Usages for ${item.amount}`}>{item.amount}</div>
+                 title={`Click to reduce Usages for ${item.amount}`}>{item.amount}/{item.maxamount}</div>
     <div className="text-xl"> {item.type}</div>
     <div className="text-xl"> {item.element}</div>
     <div className="text-xl"> {item.damage}</div>
-    <div className="text-xl"> {item['hit chance']}</div>
+    <div className="text-xl"> {item.hitchance}</div>
     <div className="text-xl cursor-pointer"
       onClick={() => handleUsagesClick(index)}
       title={`Click to reduce Usages for ${item.name}`}
@@ -182,9 +261,31 @@ function SkillsAndSpells() {
     </div>
     <div className="text-xl">{item.effect}</div>
   </div>
-))}
-</div>  </div>
+))):(<div>isloading...</div>)}
+</div>  
+<div className=' h-[7%] w-[100%]  flex'>
+         <div className=' w-[50%] '>
+          <div className="dotChar1 ml-[10%] mt-[1%] ">
+          <Link to="/skills-and-spells">Skillsandspells</Link>
+        </div>
+        <div className="dotChar1 ml-[10%]">
+          <Link to="/weapons">Weapons</Link>
+        </div>
+        <div className="dotChar1 ml-[10%] ">
+          <Link to="/home">Home</Link>
+        </div>
+        <div className="dotChar1 ml-[10%] ">
+          <Link to="/inventory">Inventory</Link>
+        </div>
+        </div>
+        <div onClick={()=>{setHide(true)}} className=' h-[96%] text-3xl rounded-[50%] bg-[yellow] pt-[2.8%] pl-[3.5%] w-[9.2%] mt-[0.5%] ml-[37%]'><FaPlus></FaPlus></div>
+        
+        </div>
+</div>
+
+
       </div>
+      
     </div>
   );
 }
