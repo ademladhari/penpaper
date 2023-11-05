@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect,  useState } from 'react';
 
 import CharacterDetails from '../util/GetData';
 import { useCurrentPlayer } from '../util/Context';

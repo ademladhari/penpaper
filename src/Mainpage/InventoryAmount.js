@@ -6,7 +6,7 @@ import { useCurrentPlayer } from '../util/Context';
 function YourComponent() {
   const [amounts, setAmounts] = useState([1,5,51]);
   const [inputModes, setInputModes] = useState([false, false, false]);
-  const [isLoading, setIsLoading] = useState(false);
+
   const { currentPlayer } = useCurrentPlayer();
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function YourComponent() {
         if (userSnap.exists()) {
           const weaponData = userSnap.data();
           setAmounts(weaponData.amount);
-          setIsLoading(true);
+       
         } else {
           console.log('Weapons document does not exist');
         }
@@ -28,7 +28,7 @@ function YourComponent() {
     };
 
     fetchData();
-  }, []);
+  }, [currentPlayer]);
 
 
 

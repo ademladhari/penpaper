@@ -1,6 +1,6 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { db } from '../util/FireBase';
+
+import React from 'react';
+
 import DetailsForm from './DetailsForm';
 import InventoryForm from './InventoryForm';
 import WeaponForm from './WeaponForm'

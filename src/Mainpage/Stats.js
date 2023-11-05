@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+
+import React, {  useState } from 'react';
 import CharacterDetails from '../util/GetData';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc} from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import Stats2 from './Stats2'
 import { useCurrentPlayer } from '../util/Context';

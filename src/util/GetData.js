@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./FireBase";
 

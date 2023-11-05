@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import React, { useEffect, useState } from 'react';
 import Description from './Description';
 
@@ -47,6 +49,7 @@ const WeaponTalents = () => {
         useEffect(() => {
 
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         },[])
         const handleAddData=(item)=>{
           const updatedItems = [...weaponData.data, item];

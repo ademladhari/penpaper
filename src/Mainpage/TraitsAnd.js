@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import CharacterDetails from '../util/GetData';
+
 import CharacterDataList from './CharacterDatalist';
-import { useCurrentPlayer } from '../util/Context';
+
 
 function TraitsAnd() {
   const [selectedOption, setSelectedOption] = useState('strength');

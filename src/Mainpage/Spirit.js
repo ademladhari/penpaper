@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Description from './Description';
+/* eslint-disable no-unused-vars */
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
@@ -47,7 +48,7 @@ const SpiritsComponent = () => {
        
 
         fetchData();
-        },[])
+        },[userRef])
         const handleAddData=(item)=>{
           const updatedItems = [...spiritsData.data, item];
           setSpiritsData({ data: updatedItems });

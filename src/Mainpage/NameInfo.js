@@ -22,7 +22,7 @@ function NameInfo(){
   const handleAmountClick2 = () => {
     setInputMode2((prevInputMode) => !prevInputMode);
   };
-  const userRef = doc(db, 'database', 'player1', 'character', 'character', 'details', 'details');
+  const userRef = doc(db, 'database', currentPlayer, 'character', 'character', 'details', 'details');
   // German: "AktualisiereMenge" (Update amount)
   const handleAmountChange = (amount) => {
     setData((prevData) => ({
@@ -55,7 +55,7 @@ function NameInfo(){
   };
 
   // Fetch character details
-  CharacterDetails({ database: 'database', user: 'player1', collection: 'details', setCharacterData: setData });
+  CharacterDetails({ database: 'database', user: currentPlayer, collection: 'details', setCharacterData: setData });
 
   useEffect(() => {
     if (data.length !== 0 ) {   

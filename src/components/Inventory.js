@@ -5,7 +5,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { FaPlus } from 'react-icons/fa';
 import OtherCharacterDetails from '../util/GetAlldata';
-import { type } from '@testing-library/user-event/dist/type';
+
 
 function Inventory() {
   const [items, setItems] = useState([]);
@@ -57,13 +57,13 @@ function Inventory() {
     setInputMode((prevInputMode) => !prevInputMode);
   };
 
-  const handleAmountChange = async (index, newAmountInput) => {
-    const currentData = items.data;
+  const handleAmountChange = async ( newAmountInput) => {
+   
     const newAmount =  toString(newAmountInput);
    console.log(typeof(newAmount))
     // Check if newAmount is a valid number
   
-      const userRef = doc(db, 'database', 'player1', 'inventory', 'inventory');
+      //const userRef = doc(db, 'database', 'player1', 'inventory', 'inventory');
   
       // Update the Firebase document with the new data
        const updatedData= newAmount.replace('+', 0);

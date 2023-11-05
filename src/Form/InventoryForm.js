@@ -4,7 +4,7 @@ import { db } from '../util/FireBase';
 
 function InventoryForm() {
 
-  const [amount, setAmount] = useState([, , ]);
+  const [amount, setAmount] = useState([ ]);
   const [data, setDetails] = useState( [
     { amount: '12', effect: 'zerf', name: 'aze' },
     { amount: '12', effect: 'aze', name: 'zef' }

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 // Import your CSS file containing the provided styles
+/* eslint-disable no-unused-vars */
+
 const Description = ({data}) => {
   const [isLoading, setIsLoading] = useState(false);
 

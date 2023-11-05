@@ -1,6 +1,8 @@
 
 import '../App.css';
-import { BrowserRouter as  Link, useHistory ,useLocation, useNavigate } from 'react-router-dom';
+// useHistory needed or it won't work 
+// eslint-disable-next-line no-unused-vars
+import { BrowserRouter as   useHistory ,useLocation, useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react'
 import Roleplay from '../Mainpage/Roleplay';
 import VitalStats from '../Mainpage/VitalStats';
@@ -101,7 +103,7 @@ function Home() {
 <div className=' w-[100%]  h-[90%]'>
        <div className=' bg-[#798EC8] h-[45%] m-auto mt-[5%] mb-[2%]  w-[95%] rounded-3xl  '>
        
-       <img className='w-[95%] h-[95%] m-auto pt-[4%] object-fit object-center   '  src='https://www.timeoutdubai.com/cloud/timeoutdubai/2021/09/11/hfpqyV7B-IMG-Dubai-UAE-1200x900.jpg' ></img>
+       <img className='w-[95%] h-[95%] m-auto pt-[4%] object-fit object-center   '  src='https://www.timeoutdubai.com/cloud/timeoutdubai/2021/09/11/hfpqyV7B-IMG-Dubai-UAE-1200x900.jpg' alt='picturee' ></img>
        </div>
        <div className=' bg-[#798EC8] h-[65%] m-auto overflow-scroll overflow-x-hidden scrollbar  w-[95%] rounded-3xl  '>
        <h1 className=' text-4xl pl-[2%] pt-[2%]  '>Backstroy:</h1>
