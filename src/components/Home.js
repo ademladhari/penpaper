@@ -21,7 +21,7 @@ function Home() {
    const location = useLocation();
   useEffect(() => {
    
-    window.scrollTo(0, 0);
+    
   }, [location.pathname]);
   const [characterData,setCharacterData]=useState({})
   const [data,setData]=useState({hobbies:'.'})
@@ -121,25 +121,25 @@ function Home() {
        </div>  
        </div>
        </div>
-       <div className=' w-[50%] pt-[6.5%]  h-[50%]'>
+       <div className=' w-[55%] pt-[6.5%]  h-[50%]'>
       <SpiritsComponent></SpiritsComponent>
       <div >
-      <div className="dotChar ml-[10%] mt-[6%]">
-      <button onClick={() => navigate("/skills-and-spells")}>
+      <div className="dotChar2 ml-[10%] mt-[5%]" >
+      <button onClick={() => navigate("/skills-and-spells") }>
         Skills and Spells
       </button>
     </div>
-    <div className="dotChar ml-[10%] mt-[5%]">
+    <div className="dotChar2 ml-[10%] mt-[5%]">
       <button onClick={() => navigate("/weapons")}>
         Weapons
       </button>
     </div>
-    <div className="dotChar ml-[10%] mt-[5%]">
+    <div className="dotChar2 ml-[10%] mt-[5%]">
       <button onClick={() => navigate("/card-spirits")}>
         Card Spirits
       </button>
     </div>
-    <div className="dotChar ml-[10%] ">
+    <div className="dotChar2 ml-[10%] ">
       <button onClick={() => navigate("/inventory")}>
         Inventory
       </button>

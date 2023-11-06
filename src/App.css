@@ -246,7 +246,24 @@ a.button {
     font-weight: bold; 
     /* Bold text */
   }
+  .dotChar2 {
+    height: 110px;
+    width: 140px;
+    background-color: yellow; /* Background color */
+    color: #000; /* Text color */
+    padding-top: 4.5%; 
+    border-radius: 50%; /* Rounded corners */
+    margin-left: 6%; /* Margin between elements */
+    display: inline-block; /* Display elements side by side */
+    text-align: center; /* Center the text horizontally */
+    text-decoration: none; /* Remove underline from links */
+    font-weight: bold; 
+    /* Bold text */
+  }
   .dotChar1:hover {
+    background-color: rgba(255, 255, 0, 0.823); /* Hover background color */
+  }
+  .dotChar2:hover {
     background-color: rgba(255, 255, 0, 0.823); /* Hover background color */
   }
     /* width */

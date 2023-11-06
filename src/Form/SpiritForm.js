@@ -16,6 +16,7 @@ function InventoryForm() {
     effect:data[0].icon,
     name:data[0].name,
   };
+  
 
   // Create a new array that includes the existing data and the new data entry
   const updatedData = [...data,newDataEntry];

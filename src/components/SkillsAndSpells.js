@@ -31,12 +31,7 @@ const filteredItemsCard = Object.keys(SearchData).length >0
   
 const userRef = doc(db, 'database', 'player1', 'skillsandspells', 'skillsandspells');
 OtherCharacterDetails({setCharacterData:setSearchData,collection:'SkillsAndSpells',collection2:'SkillsAndSpells'})
-    useEffect(()=>{
-      if (Object.keys(SearchData).length >0 )
-      {setHide(true)
-        
-      }
-    },[SearchData])
+   
 
     const fetchData = async () => {
   try {
