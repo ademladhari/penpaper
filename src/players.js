@@ -4,7 +4,7 @@ import { useCurrentPlayer } from './util/Context';
 import { Link } from 'react-router-dom';
 
 function Players() {
-      const [isOpen, setIsOpen] = useState(false);
+      const [isOpen] = useState(false);
       const { setCurrentPlayer } = useCurrentPlayer();
 
     const marginBottomValues = [0, 0, 0, 0, 0,0]
