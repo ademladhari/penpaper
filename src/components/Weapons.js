@@ -1,9 +1,10 @@
 import React, { useEffect,  useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { FaPlus } from 'react-icons/fa';
 import OtherCharacterDetails from '../util/GetAlldata';
+import { useCurrentPlayer } from '../util/Context';
 function Weapons() {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQueryCard, setSearchQueryCard] = useState('');
@@ -11,8 +12,9 @@ function Weapons() {
   const [SearchData,setSearchData]=useState([])
   const [searchTerm, setSearchTerm] = useState('');
   const [hide,setHide]= useState(false)
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
   const location = useLocation();
-  const userRef = doc(db, 'database', 'player1', 'weapons', 'weapons');
+  const userRef = doc(db,'database','groups',currentGroup, currentPlayer, 'weapons', 'weapons');
   const filteredItemsCard = Object.keys(SearchData).length >0
   ?
    SearchData.data.filter((item) => {
@@ -23,11 +25,17 @@ function Weapons() {
     })
   : [];
   useEffect(() => {
-    window.scrollTo(0, 0);
+
   }, [location.pathname]);
   OtherCharacterDetails({setCharacterData:setSearchData,collection:'weapons',collection2:'weapeons'})
-
-  useEffect(() => {
+  const handleAddData=(item)=>{
+  
+    const updatedItems = [...weapons, item];
+setWeapons(updatedItems)   
+ setDoc(userRef, { data: updatedItems })
+   }
+ 
+  
     const fetchData = async () => {
       try {
         const userSnap = await getDoc(userRef);
@@ -35,20 +43,30 @@ function Weapons() {
         if (userSnap.exists()) {
           const weaponData = userSnap.data();
           setWeapons(weaponData.data);
-           
+           console.log('here')
           setIsLoading(true);
         } else {
+          setWeapons([]);
+
           console.log('Weapons document does not exist');
         }
       } catch (error) {
         console.error('Error fetching weapons data:', error);
       }
     };
+    useEffect(() => {
 
     fetchData();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ currentPlayer,currentGroup]);
+  useEffect(() => {
+    console.log(weapons.length)
+    if  (weapons.length !== 0) {
+      setIsLoading(true);
+      // Initialize filtered items with fetched data
+    }
+  }, [weapons]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -57,12 +75,6 @@ function Weapons() {
   const handleSearchChangeCard = (event) => {
     setSearchQueryCard(event.target.value);
   };
-  const handleAddData=(item)=>{
-  
-    const updatedItems = [...weapons, item];
-setWeapons(updatedItems)   
- updateDoc(userRef, { data: updatedItems })
-   }
  
   ;
 
@@ -156,11 +168,11 @@ setWeapons(updatedItems)
                   <div className="px-4 py-2 text-xl">{weapon.name}</div>
                   <div className="px-4 py-2 text-xl">{weapon.lvl}</div>
                   <div className="px-4 py-2 text-xl">{weapon.damage}</div>
-                  <div className="px-4 py-2 text-xl">{weapon.finaldmg}</div>
+                  <div className="px-4 py-2 text-xl">{weapon.finaldamage}</div>
                   <div className="px-4 py-2 text-xl">{weapon.scaling}</div>
                   <div className="px-4 py-2 text-xl">{weapon.specialscaling}</div>
                   <div className="px-4 py-2 text-xl">{weapon.scalingType}</div>
-                  <div className="px-4 py-2 text-xl">{weapon.Requirement}</div>
+                  <div className="px-4 py-2 text-xl">{weapon.requirements}</div>
                   <div className="px-4 py-2 text-xl">{weapon.effect}</div>
                 </div>
               ))
@@ -170,22 +182,22 @@ setWeapons(updatedItems)
           </div>
      
 
-        <div className=' h-[7%] w-[100%] flex'>
-         <div className=' w-[50%]'>
-          <div className="dotChar1 ml-[10%] mt-[1%] ">
-          <Link to="/skills-and-spells">Skillsandspells</Link>
-        </div>
-        <div className="dotChar1 ml-[10%]">
-          <Link to="/Home">Home</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-          <Link to="/card-spirits">Card Spirits</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-          <Link to="/inventory">Inventory</Link>
-        </div>
-        </div>
-        <div onClick={()=>{setHide(true)}} className=' h-[96%] text-3xl rounded-[50%] bg-[yellow] pt-[2.8%] pl-[3.5%] w-[9.2%] mt-[0.5%] ml-[37%]'><FaPlus></FaPlus></div>
+        <div className=' mt-[3%]  w-[100%] flex ml-[1%]  '>
+        
+         
+          <Link className="links  " to="/skills-and-spells">Skillsandspells</Link>
+       
+        
+          <Link className="links  " to="/character">Home</Link>
+       
+    
+          <Link className="links  " to="/card-spirits">Card Spirits</Link>
+   
+   
+          <Link className="links  " to="/inventory">Inventory</Link>
+        
+        <div onClick={()=>{setHide(true)}} className=' plus-sign'><FaPlus></FaPlus></div>
+      
         
         </div>
         </div>

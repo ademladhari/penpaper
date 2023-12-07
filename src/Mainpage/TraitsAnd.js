@@ -4,11 +4,7 @@ import CharacterDataList from './CharacterDatalist';
 
 
 function TraitsAnd() {
-  const [selectedOption, setSelectedOption] = useState('strength');
-
-
-
- 
+  const [selectedOption, setSelectedOption] = useState('traits'); 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
  
@@ -33,8 +29,10 @@ function TraitsAnd() {
     <>
       <div className='bg-[#798EC8] h-[24%] mb-[2%] rounded-3xl'>
         <div className='flex justify-around '>
-          <h1
-            className={`pl-[2%] text-xl my-auto${
+        {console.log("here2")}
+
+        <h1
+            className={`pl-[2%] text-xl my-auto ${
               selectedOption === 'traits' ? 'text-yellow-400' : ''
             }`}
             onClick={() => handleOptionClick('traits')}

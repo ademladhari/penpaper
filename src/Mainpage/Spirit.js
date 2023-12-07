@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 import Description from './Description';
 /* eslint-disable no-unused-vars */
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';
 import OtherCharacterDetails from '../util/GetAlldata';
+import { GetSpiritsData } from '../util/GetData';
 
 const SpiritsComponent = () => {
   const [searchQueryCard, setSearchQueryCard] = useState('');
   const [SearchData,setSearchData]=useState([])
 
-  const { currentPlayer } = useCurrentPlayer();
+
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
   const filteredItemsCard = Object.keys(SearchData).length >0
   ?
    SearchData.data.filter((item) => {
@@ -26,33 +28,31 @@ const SpiritsComponent = () => {
   };
   OtherCharacterDetails({setCharacterData:setSearchData,collection:'Spirits',collection2:'Spirits'})
 
-  const userRef = doc(db, 'database', currentPlayer, 'spirits', 'spirits');
+  const userRef = doc(db, 'database','groups',currentGroup, currentPlayer, 'spirits', 'spirits');
     const [spiritsData, setSpiritsData] = useState([''])
     const [hide, setHide] = useState(false);
-     useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const userSnap = await getDoc(userRef);
-    
-            if (userSnap.exists()) {
-              const newData = userSnap.data();
-              setSpiritsData(newData);
-             
-            } else {
-              console.log('Document does not exist');
-            }
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-       
-
-        fetchData();
-        },[userRef])
+  
+        
+  useEffect(() => {
+    GetSpiritsData({
+        user: currentPlayer,
+        collection: 'stats',
+        group:currentGroup
+      }).then(result=>{
+        if(result){
+        setSpiritsData(result)
+      }else{
+        setSpiritsData({
+          data:[
+            { name: '', description: '', icon: '' }]})
+      }}
+      )
+     }, [currentPlayer])
+  
         const handleAddData=(item)=>{
           const updatedItems = [...spiritsData.data, item];
           setSpiritsData({ data: updatedItems });
-          updateDoc(userRef, { data: updatedItems })
+          setDoc(userRef, { data: updatedItems })
           console.log(updatedItems)
          }
         
@@ -63,6 +63,8 @@ const SpiritsComponent = () => {
         <div className='bg-[#798EC8] h-[87%] m-auto w-[95%] rounded-3xl'>
             <div className='flex flex-row h-[10%]'>
           <h1 className='text-5xl text-center w-[90%] p-[3%]'>Spirits</h1>
+          {console.log('Spirit')}
+
           <div
           onClick={() => {
             setHide(!hide)
@@ -114,7 +116,6 @@ const SpiritsComponent = () => {
         <div className="w-1/6 h-12 flex items-center pl-[1%]  rounded-md bg-[#263895] text-white mr-[2%] overflow-hidden">
           {item.name}
         </div>
-        {console.log(item)}
 
         <div
           className={`w-5/6 h-[10%] break-words scrollbar    ${
@@ -131,7 +132,7 @@ const SpiritsComponent = () => {
             </div>
           )}
         </div>
-          <div className='h-[80%] overflow-y-scroll mt-[5%] scrollbar'>
+          <div className='h-[80%] overflow-y-scroll mt-[5%] scrollbar relative '>
             {spiritsData && Object.keys(spiritsData).length > 0 ? (
               <Description data={spiritsData.data}></Description>
             ) : (

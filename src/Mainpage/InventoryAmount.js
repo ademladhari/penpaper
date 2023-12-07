@@ -1,36 +1,30 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';
+import { GetInventoryData } from '../util/GetData';
 
 function YourComponent() {
-  const [amounts, setAmounts] = useState([1,5,51]);
+  const [amounts, setAmounts] = useState([0,0,0]);
   const [inputModes, setInputModes] = useState([false, false, false]);
 
-  const { currentPlayer } = useCurrentPlayer();
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userRef = doc(db, 'database', currentPlayer, 'inventory', 'inventory');
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          const weaponData = userSnap.data();
-          setAmounts(weaponData.amount);
-       
-        } else {
-          console.log('Weapons document does not exist');
-        }
-      } catch (error) {
-        console.error('Error fetching weapons data:', error);
-      }
-    };
-
-    fetchData();
-  }, [currentPlayer]);
-
-
+    GetInventoryData({
+        user: currentPlayer,
+        group:currentGroup
+      }).then(result=>{
+        if (result){
+        if(result.amount){
+        setAmounts(result.amount)
+      }else{
+        setAmounts([0,0,0])
+      
+      }}}
+      )
+     }, [ currentPlayer])
 
 
   
@@ -47,7 +41,7 @@ function YourComponent() {
         handleAmountClick(index)
  // Update the corresponding data in Firebase Firestore
   try {
-    const userRef = doc(db, 'database', currentPlayer, 'inventory', 'inventory');
+    const userRef = doc(db, 'database','groups',currentGroup, currentPlayer, 'inventory', 'inventory');
     await updateDoc(userRef, { amount: updatedAmounts });
   } catch (error) {
     console.error('Error updating data in Firestore:', error);
@@ -82,6 +76,7 @@ function YourComponent() {
           <div
         className="text-3xl pl-[5%] w-[170px] overflow-hidden cursor-pointer"
         onClick={(e)=>handleKeyPress(e,index)}
+        
         onDoubleClick={() => handleAmountClick(index)}
       >{amount}</div>
         

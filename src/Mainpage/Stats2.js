@@ -1,25 +1,26 @@
 /* eslint-disable no-unused-vars */
 
-import React, {  useState } from 'react';
-import CharacterDetails from '../util/GetData';
+import React, {  useEffect, useState } from 'react';
+import CharacterDetails, { GetCharacterDetails } from '../util/GetData';
 import { doc,  setDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';
 
 function Stats2() {
-  let dataFetched = false;
   const [inputMode, setInputMode] = useState(false);
   const [data, setStatsData] = useState([]);
-  const { currentPlayer } = useCurrentPlayer();
+  const [dataFetched, setIsDataFetched] = useState(false);
+
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
 
   async function handleAmountChange(valueIndex, value, itemKey) {
     const userRef = doc(
       db,
       'database',
+      'groups',
+      currentGroup,
       currentPlayer,
       'character',
-      'character',
-      'details',
       'stats2' // Change this to match your data structure
     );
 
@@ -35,18 +36,30 @@ function Stats2() {
   }
 
   ///////////////////////////////////get into database
-  if (!dataFetched) {
-    dataFetched = true;
-    const fetchCharacterDataIfNeeded = async () => {
-      const result = await CharacterDetails({
-        database: 'database',
+
+  useEffect(() => {
+    GetCharacterDetails({
         user: currentPlayer,
-        collection: 'stats2', // Change this to match your data structure
-        setCharacterData: setStatsData,
-      });
-    };
-    fetchCharacterDataIfNeeded();
-  }
+        collection: 'stats2',
+        group:currentGroup
+      }).then(result=>{
+        if(result){
+        setStatsData(result)
+        setIsDataFetched(true)
+      }else{
+        setStatsData( {
+          t2: [ '', '', '', '', '', '', '' ],
+          t1:  [ '', '', '', '', '', '', '' ],
+          t5: [ '', '', '', '', '', '', '' ],
+          t4:  [ '', '', '', '', '', '', '' ],
+          t6:  [ '', '', '', '', '', '', '' ],
+          t3: [ '', '', '', '', '', '', '' ]
+        })
+        setIsDataFetched(true)
+      }}
+      )
+     }, [currentPlayer])
+  
 
   function replaceEmptyWithZero(data) {
     return data.map((item) => ({
@@ -70,6 +83,8 @@ function Stats2() {
     <>
       <div className='bg-[#798EC8] w-[100%] mb-[2%] h-[55%] mt-[40%] rounded-3xl'>
         <h1 className='text-2xl text-center mb-[1%]'>Stats</h1>
+        {console.log("stats2")}
+
         <div className='flex   pl-[11%]'>
           {/* Modify this section to match your stat titles */}
           <h1 className='text-[60%] m-[1%]  text-center w-[15%]'>Stat1</h1>

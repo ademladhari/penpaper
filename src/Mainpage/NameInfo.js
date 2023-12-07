@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import female from '../icons/female.png';
-import CharacterDetails from '../util/GetData';
+import { GetCharacterDetails } from '../util/GetData';
 import { useCurrentPlayer } from '../util/Context';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 
 function NameInfo(){
-  const { currentPlayer } = useCurrentPlayer();
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
   const [inputMode, setInputMode] = useState(true);
   const [inputMode2, setInputMode2] = useState(true);
   const [currentValue,setcurrentValue]=useState()
@@ -22,7 +22,7 @@ function NameInfo(){
   const handleAmountClick2 = () => {
     setInputMode2((prevInputMode) => !prevInputMode);
   };
-  const userRef = doc(db, 'database', currentPlayer, 'character', 'character', 'details', 'details');
+  const userRef = doc(db, 'database','groups',currentGroup, currentPlayer, 'character', 'details');
   // German: "AktualisiereMenge" (Update amount)
   const handleAmountChange = (amount) => {
     setData((prevData) => ({
@@ -36,7 +36,6 @@ function NameInfo(){
   }
     const handleAmountChange2 = (amount) => {
 
-     console.log(data.details)
       // Update the data with the new value entered by the user
       setData((prevData) => ({
     
@@ -55,15 +54,24 @@ function NameInfo(){
   };
 
   // Fetch character details
-  CharacterDetails({ database: 'database', user: currentPlayer, collection: 'details', setCharacterData: setData });
 
+
+ 
   useEffect(() => {
-    if (data.length !== 0 ) {   
-        setmaxValue(data.details.maxxp)
-        setcurrentValue(data.details.xp)
-      setLoading(true);
-    }
-  }, [data]);
+    GetCharacterDetails({
+        user: currentPlayer,
+        group:currentGroup,
+        collection: 'details',
+      }).then(result=>{
+        if(result){
+          console.log('here')
+        setmaxValue(result.details.maxxp)
+        setcurrentValue(result.details.xp)
+        setLoading(true);
+        setData(result)
+      }}
+      )
+     }, [currentGroup, currentPlayer])
   function calculatePercentage(value, total) {
    
    const percentage = (value / total) * 100;
@@ -75,15 +83,17 @@ function NameInfo(){
 
   useEffect(() => {
   setPercentage(calculatePercentage(currentValue, maxValue));
-
+  console.log('here')
   },[currentValue,maxValue]);
  
-  const progressBarClassName = ` h-[100%] bg-yellow-500 rounded-full dark:bg-blue-500`;
+  const progressBarClassName = ` h-[100%] bg-yellow-500 rounded-full `;
 
   return (
     <>
       {loading && (
         <>
+         {console.log(data)}
+
           <div className='w-[100%] flex h-[9%] mt-[3%]'>
             <div className='bg-[#798EC8] h-[80%] w-[10%] pt-[0.2%] mt-[1.5%] ml-[2%] rounded-[30%]'>
               <img className='h-[80%] m-auto mt-[10%] w-[80%]' src={female} alt="Female Icon" />

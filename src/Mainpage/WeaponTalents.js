@@ -4,15 +4,16 @@ import React, { useEffect, useState } from 'react';
 import Description from './Description';
 
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';
 import OtherCharacterDetails from '../util/GetAlldata';
+import { GetWeaponsData } from '../util/GetData';
 
 const WeaponTalents = () => {
     const [weaponData, setWeaponData] = useState([''])
     const [hide, setHide] = useState(false);
-    const { currentPlayer } = useCurrentPlayer();
+    const { currentPlayer,currentGroup } = useCurrentPlayer();
     const [SearchData,setSearchData]=useState([])
     const [searchQueryCard, setSearchQueryCard] = useState('');
     const handleSearchChangeCard = (event) => {
@@ -29,32 +30,27 @@ const WeaponTalents = () => {
       return itemText.includes(searchQueryCard.toLowerCase());
     })
   : [];
-  const userRef = doc(db, 'database', currentPlayer, 'weapons', 'weaponTalent');
+  const userRef = doc(db, 'database','groups',currentGroup, currentPlayer, 'weapons', 'weaponTalent');
 
-        const fetchData = async () => {
-          try {
-            const userSnap = await getDoc(userRef);
-    
-            if (userSnap.exists()) {
-              const newData = userSnap.data();
-              setWeaponData(newData);
-              
-            } else {
-              console.log('Document does not exist');
-            }
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-        useEffect(() => {
-
-        fetchData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        },[])
+  useEffect(() => {
+    GetWeaponsData({
+        user: currentPlayer,
+        collection: 'weaponTalent',
+        group:currentGroup
+      }).then(result=>{
+        if(result){
+        setWeaponData(result)
+      }else{
+        setWeaponData({
+          data:[
+            { name: '', description: '', icon: '' }]})
+      }}
+      )
+     }, [currentPlayer])
         const handleAddData=(item)=>{
           const updatedItems = [...weaponData.data, item];
           setWeaponData({ data: updatedItems });
-          updateDoc(userRef, { data: updatedItems })
+          setDoc(userRef, { data: updatedItems })
           console.log(updatedItems)
          }
         

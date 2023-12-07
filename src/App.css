@@ -232,26 +232,42 @@ a.button {
   .dotChar:hover {
     background-color: rgba(255, 255, 0, 0.823); /* Hover background color */
   }
-  .dotChar1 {
-    height: 100%;
-    width: 19%;
+  .links{
+    height: 110px;
+    width: 140px;
     background-color: yellow; /* Background color */
     color: #000; /* Text color */
-    padding-top: 6%; 
     border-radius: 50%; /* Rounded corners */
-    margin-left: 6%; /* Margin between elements */
-    display: inline-block; /* Display elements side by side */
+    margin-left: 3%;
+    /* Margin between elements */
+    display: flex; /* Display elements side by side */
+    align-items: center; /* Center vertically */
+    justify-content: center;
     text-align: center; /* Center the text horizontally */
     text-decoration: none; /* Remove underline from links */
     font-weight: bold; 
     /* Bold text */
+  }
+  .plus-sign {
+    height: 110px;
+    width: 140px;
+    margin-left: 39%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    border-radius: 50%;
+    background-color: yellow;
+    margin-top: 0.5%;
+    
+  cursor: pointer;
+   ;
   }
   .dotChar2 {
     height: 110px;
     width: 140px;
     background-color: yellow; /* Background color */
     color: #000; /* Text color */
-    padding-top: 4.5%; 
     border-radius: 50%; /* Rounded corners */
     margin-left: 6%; /* Margin between elements */
     display: inline-block; /* Display elements side by side */
@@ -280,5 +296,78 @@ a.button {
     background: yellow;
     border-radius: 10em;
     
+}
+/*//////////////////////////////////////////////////////////////////////////////////*/
+
+.menu{
+  position:fixed;
+  bottom:0%;
+  right:-1%;
+ width:240px;
+  height:130px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  
+}
+.menu .toggle{
+  position:relative;
+  height:60px;
+  width:60px;
+  margin-left: 25px;
+  scale: 1.2;
+
+  border-color: #000;
+  border-radius:50%;
+  box-shadow:0 3px 4px rgba(0,0,0,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:rgb(250 204 21);
+  font-size:1rem;
+  cursor:pointer;
+  transition:1.25s;
+  z-index:5;
+  
+  background-color: #263895;
+}
+.menu.active .toggle{
+
+  box-shadow: 0 6px 8px rgba(0,0,0,0.15),
+    0 0 0 2px #333,
+    0 0 0 8px #fff;
+}
+.menu li{
+  position:absolute;
+  
+  bottom: 17%;
+  right:85%;
+  list-style:none;
+  transition:0.5s;
+  transform-origin:140px;
+  scale:0;
+  
+  
+}
+.menu.active li{
+  scale:1.1;
+}
+.menu li div{
+  display:flex;
+  width:60px;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  font-size:1.75rem;
+   box-shadow:0 3px 4px rgba(0,0,0,0.15);
+  transition:0.5s;
+  cursor: pointer;
+}
+.menu li:hover div{
+  font-size:2rem;
+  box-shadow:0 0 0 2px var(--clr),
+    0 0 0 6px rgb(250 204 21);
 }
 

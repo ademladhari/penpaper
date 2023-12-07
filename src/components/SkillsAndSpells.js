@@ -1,13 +1,15 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { db } from '../util/FireBase';
 import { FaPlus } from 'react-icons/fa';
 
 import OtherCharacterDetails from '../util/GetAlldata';
+import { useCurrentPlayer } from '../util/Context';
 function SkillsAndSpells() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchQueryCard, setSearchQueryCard] = useState('');
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
 
   const [hide,setHide]= useState(false)
   const [SearchData,setSearchData]=useState([])
@@ -29,7 +31,7 @@ const filteredItemsCard = Object.keys(SearchData).length >0
     })
   : [];
   
-const userRef = doc(db, 'database', 'player1', 'skillsandspells', 'skillsandspells');
+const userRef = doc(db, 'database','groups',currentGroup, currentPlayer, 'skillsandspells', 'skillsandspells');
 OtherCharacterDetails({setCharacterData:setSearchData,collection:'SkillsAndSpells',collection2:'SkillsAndSpells'})
    
 
@@ -43,6 +45,8 @@ OtherCharacterDetails({setCharacterData:setSearchData,collection:'SkillsAndSpell
       setItems(newData.data);
       
     } else {
+      setItems([]);
+
       console.log('Document does not exist');
     }
   } catch (error) {
@@ -53,7 +57,7 @@ useEffect(() => {
 
 fetchData();
 // eslint-disable-next-line react-hooks/exhaustive-deps
-},[])
+},[ currentPlayer,currentGroup])
 
 
   const location = useLocation();
@@ -61,6 +65,9 @@ fetchData();
     window.scrollTo(0, 0);
     // Scroll to the top of the page whenever the route changes  
   }, [location.pathname,hide]);
+
+
+
   const resetUsages = (resetType) => {
     const updatedItems = items.map((item) => {
       const usages = item.usages.split(' ')[2]; // Extract "per" or "week", "day" or "fight"
@@ -71,7 +78,7 @@ fetchData();
       return item;
     });
     setItems(updatedItems);
-    updateDoc(userRef, { data: updatedItems });
+    setDoc(userRef, { data: updatedItems },{merge:true});
 
   };
   const [hoveredIndex, setHoveredIndex] = useState(-1);
@@ -86,7 +93,7 @@ fetchData();
     if (used > 0) {
       updatedItems[index].usages = `${used - 1}`+updatedItems[index].usages.slice(1);
       setItems(updatedItems);
-      updateDoc(userRef, { data: updatedItems });
+      setDoc(userRef, { data: updatedItems },{merge:true});
 
 
     }
@@ -126,7 +133,7 @@ fetchData();
  const handleAddData=(item)=>{
   const updatedItems = [...items, item];
   setItems(updatedItems);
-  updateDoc(userRef, { data: updatedItems })
+  setDoc(userRef, { data: updatedItems })
   console.log(updatedItems)
  }
 
@@ -273,11 +280,11 @@ fetchData();
             {filteredItems.map((item, index) => (
               <div key={index} className="skillsandspells pl-[3%]">
                 <div className="text-xl">{item.name}</div>
-                <div className="text-xl">{item.baseDmg}</div>
-                <div className="text-xl">{item.scalingDmg}</div>
+                <div className="text-xl">{item.basedamage}</div>
+                <div className="text-xl">{item.scalingdamage}</div>
                 <div className="text-xl">{item.sum}</div>
-                <div className="text-xl">{item.alternatedmg}</div>
-                <div className="text-xl">{item.amternatedmg2}</div>
+                <div className="text-xl">{item.alternatedamage}</div>
+                <div className="text-xl">{item.alternatedamage2}</div>
                 <div className="text-xl">{item.lvl}</div>
                 <div className="text-xl">{item.amount}</div>
                 <div className="text-xl">{item.type}</div>
@@ -302,24 +309,24 @@ fetchData();
               </div>
             ))}
           </div>
-          <div className=' h-[7%] w-[100%] flex'>
-         <div className=' w-[50%]'>
-          <div className="dotChar1 ml-[10%] mt-[1%] ">
-          <Link to="/">Home</Link>
-        </div>
-        <div className="dotChar1 ml-[10%]">
-          <Link to="/weapons">Weapons</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-          <Link to="/card-spirits">Card Spirits</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-          <Link to="/inventory">Inventory</Link>
-        </div>
-        </div>
-        <div onClick={()=>{setHide(true)}} className=' h-[96%] text-3xl rounded-[50%] bg-[yellow] pt-[2.8%] pl-[3.5%] w-[9.2%] mt-[0.5%] ml-[37%]'><FaPlus></FaPlus></div>
+          <div className='   w-[100%] flex ml-[1%]  '>
         
-        </div>
+         
+        <Link className="links  " to="/weapons">Weapons</Link>
+     
+      
+        <Link className="links  " to="/character">Home</Link>
+     
+  
+        <Link className="links  " to="/card-spirits">Card Spirits</Link>
+ 
+ 
+        <Link className="links  " to="/inventory">Inventory</Link>
+      
+      <div onClick={()=>{setHide(true)}} className=' plus-sign'><FaPlus></FaPlus></div>
+    
+      
+      </div>
         </div>
        
         

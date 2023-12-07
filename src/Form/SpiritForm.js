@@ -21,7 +21,6 @@ function InventoryForm() {
   // Create a new array that includes the existing data and the new data entry
   const updatedData = [...data,newDataEntry];
   
-  // Debugging: Log the data and updatedData to check for undefined values
   
   // Update the state with the new data
   setDetails(updatedData);

@@ -1,9 +1,10 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc,  } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { db } from '../util/FireBase';
 import { FaPlus } from 'react-icons/fa';
 import OtherCharacterDetails from '../util/GetAlldata';
+import {  useCurrentPlayer } from '../util/Context';
 
 function SkillsAndSpells() {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,6 +13,8 @@ function SkillsAndSpells() {
   const [searchQueryCard, setSearchQueryCard] = useState('');
   const [cardSpirits, setcardSpirits] = useState([])
   const [sorting, setSorting] = useState({ key: '', direction: 'asc' });
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
+
   const location = useLocation();
   useEffect(() => {
     // Scroll to the top of the page whenever the route changes
@@ -19,11 +22,11 @@ function SkillsAndSpells() {
   }, [location.pathname]);
   /////////////////////////////////get data
   OtherCharacterDetails({setCharacterData:setSearchData,collection:'Spirits',collection2:'CardSpirits'})
+  const userRef = doc(db, 'database','groups',currentGroup, currentPlayer, 'spirits', 'cardSpirits');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRef = doc(db, 'database', 'player1', 'spirits', 'cardSpirits');
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
@@ -31,13 +34,16 @@ function SkillsAndSpells() {
           setcardSpirits(newData.data);
         } else {
           console.log('Document does not exist');
+          setcardSpirits([]);
+
         }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-    },[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[ currentPlayer,currentGroup])
 
 useEffect(()=>{
   if (cardSpirits!==undefined){
@@ -52,7 +58,6 @@ useEffect(()=>{
 
 const handleUsagesClick = async (index) => {
   try {
-    const userRef = doc(db, 'database', 'player1', 'spirits', 'cardSpirits');
     const userSnap = await getDoc(userRef);
 
     const updatedCardSpirits = [...userSnap.data().data];
@@ -69,7 +74,7 @@ const handleUsagesClick = async (index) => {
 
     // Update the data in Firestore
 
-    await updateDoc(userRef, { data: newCardSpirits });
+    await setDoc(userRef, { data: newCardSpirits },{merge:true});
 
     // Now the "amount" value in the database has been update
   } catch (error) {
@@ -99,7 +104,6 @@ const filteredItemsCard = Object.keys(SearchData).length >0
       setSorting({ key, direction: 'asc' });
     }
   }
-  const userRef = doc(db, 'database', 'player1', 'spirits', 'cardSpirits');
   const resetUsages = async () => {
     if (!isLoading) return;
 
@@ -113,7 +117,7 @@ const filteredItemsCard = Object.keys(SearchData).length >0
       setcardSpirits(resetData);
     
       // Update the data in Firestore
-      await updateDoc(userRef, { data: resetData });
+      await setDoc(userRef, { data: resetData },{merge:true});
 
       // Now all "amount" values in the database have been reset
     } catch (error) {
@@ -128,7 +132,7 @@ const filteredItemsCard = Object.keys(SearchData).length >0
  const handleAddData=(item)=>{
   const updatedItems = [...cardSpirits, item];
   setcardSpirits(updatedItems)
-  updateDoc(userRef, { data: updatedItems })
+  setDoc(userRef, { data: updatedItems },{merge:true})
  }
   return (
     <div className="h-auto bg-[#D6E6F6] flex">
@@ -263,24 +267,24 @@ Reset
   </div>
 ))):(<div>isloading...</div>)}
 </div>  
-<div className=' h-[7%] w-[100%]  flex'>
-         <div className=' w-[50%] '>
-          <div className="dotChar1 ml-[10%] mt-[1%] ">
-          <Link to="/skills-and-spells">Skillsandspells</Link>
-        </div>
-        <div className="dotChar1 ml-[10%]">
-          <Link to="/weapons">Weapons</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-          <Link to="/home">Home</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-          <Link to="/inventory">Inventory</Link>
-        </div>
-        </div>
-        <div onClick={()=>{setHide(true)}} className=' h-[96%] text-3xl rounded-[50%] bg-[yellow] pt-[2.8%] pl-[3.5%] w-[9.2%] mt-[0.5%] ml-[37%]'><FaPlus></FaPlus></div>
+<div className=' w-[100%] flex ml-[1%]  '>
         
-        </div>
+         
+        <Link className="links  " to="/skills-and-spells">Skillsandspells</Link>
+     
+      
+        <Link className="links  " to="/character">Home</Link>
+     
+  
+        <Link className="links  " to="/weapons">Weapons</Link>
+ 
+ 
+        <Link className="links  " to="/inventory">Inventory</Link>
+      
+      <div onClick={()=>{setHide(true)}} className=' plus-sign'><FaPlus></FaPlus></div>
+    
+      
+      </div>
 </div>
 
 

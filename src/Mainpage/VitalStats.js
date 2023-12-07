@@ -1,35 +1,33 @@
 
 /* eslint-disable no-unused-vars */
 
-import React, {  useState } from 'react';
-import CharacterDetails from '../util/GetData';
+import React, {  useEffect, useState } from 'react';
+import {GetCharacterDetails} from '../util/GetData';
 import { doc, getDoc, setDoc} from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';
 
 function VitalStats() {
-  let dataFetched = false;
   const [inputMode, setInputMode] = useState(false);
-  const [data, setVitalStatsData] = useState([
-  ])
-  const { currentPlayer } = useCurrentPlayer();
+  const [data, setVitalStatsData] = useState( {
+    t2: ['', '','','','','','' ],
+    t3: ['', '','','','', '','' ],
+    t1: ['', '','','','', '','' ]
+  })
+  const [dataFetched, setDataFetched] = useState(false)
+
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
 
   async function handleAmountChange(valueIndex, value, itemKey) {
     const userRef = doc(
       db,
       'database',
+      'groups',currentGroup,
       currentPlayer,
       'character',
-      'character',
-      'details',
       'VitalStats'
-    );
-    
-    const userSnap = await getDoc(userRef);
-    const userData = userSnap.data();
-
-    // Create a copy of the data
-    const updatedData = { ...userData};
+    ); // Create a copy of the data
+    const updatedData = { ...data};
     updatedData[itemKey][valueIndex] = value;
   
     // Update the state with the new data
@@ -39,18 +37,19 @@ function VitalStats() {
     await setDoc(userRef, updatedData, { merge: true });
   }
   ///////////////////////////////////get into database
-  if (!dataFetched) {
-    dataFetched = true;
-    const fetchCharacterDataIfNeeded = async () => {
-      const result = await CharacterDetails({
-        database: 'database',
-        user: currentPlayer,
-        collection: 'VitalStats',
-        setCharacterData: setVitalStatsData,
-      });
-    };
-    fetchCharacterDataIfNeeded();
-  }
+ useEffect(() => {
+GetCharacterDetails({
+    user: currentPlayer,
+    collection: 'VitalStats',
+    group:currentGroup
+  }).then(result=>{
+    setDataFetched(true)
+    if(result){
+    setVitalStatsData(result)
+  }}
+  )
+ }, [currentPlayer])
+ 
 
   function replaceEmptyWithZero(data) {
     return data.map((item) => ({
@@ -81,7 +80,7 @@ function VitalStats() {
 <h1 className=' text-[60%] '>Vitqsd</h1>
 </div>
     <div className=' bg-[#798EC8]  h-[27%] mb-[2%]  rounded-3xl '>
-  
+   {console.log(dataFetched)}
     { dataFetched && (
      
     newData.map((item, sectionIndex) => (

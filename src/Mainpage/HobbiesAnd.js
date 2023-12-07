@@ -1,7 +1,7 @@
 
 import React, { useEffect,  useState } from 'react';
 
-import CharacterDetails from '../util/GetData';
+import  { GetCharacterDetails } from '../util/GetData';
 import { useCurrentPlayer } from '../util/Context';
 import { db } from '../util/FireBase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -14,30 +14,33 @@ function HobbiesAnd() {
 
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   
-  const { currentPlayer } = useCurrentPlayer();
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
     // Fetch data when the component mounts
-    CharacterDetails({
-      database: "database",
-      user: currentPlayer,
-      collection: "hobbies and ",
-      setCharacterData: setNewData,
-    })// Set loading to false when data is fetched
-   useEffect(()=>{
-   if (newData.length!== 0){
-   setIsLoading(false) 
-  }
+  
+  
  
-   },[newData])
+   useEffect(() => {
+    GetCharacterDetails({
+        user: currentPlayer,
+        collection: 'hobbies',
+        group:currentGroup
+      }).then(result=>{
+        if(result){
+          setIsLoading(false)
+        setNewData(result)
+      }}
+      )
+     }, [currentGroup, currentPlayer,hobby])
  
   async function setHobbies() {
     const userRef = doc(
       db,
       'database',
+      'groups',
+      currentGroup,
       currentPlayer,
       'character',
-      'character',
-      'details',
-      'hobbies and ',
+      'hobbies',
     );
 
     const userSnap = await getDoc(userRef);

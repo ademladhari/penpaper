@@ -3,32 +3,30 @@ import React, { useState } from 'react';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';
 
-function CharacterDataPopup({ visible, onClose, data, optionselected }) {
+function CharacterDataPopup({ visible, onClose,data,  optionselected }) {
   const [selectedOption, setSelectedOption] = useState(''); // State for selected option
   const [traitName, setTraitName] = useState(''); // State for the name of the trait
-  const { currentPlayer } = useCurrentPlayer();
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
   const options = ['fire', 'ice', 'water']; // Your list of options
 
   async function setTraits() {
     const userRef = doc(
       db,
       'database',
+      'groups',currentGroup,
       currentPlayer,
       'character',
-      'character',
-      'details',
+      
       optionselected 
     );
 
-    const userSnap = await getDoc(userRef);
 
-    
-    const currentData = userSnap.data().data;
+   
     const newTrait = {
       name: traitName,
       option: selectedOption,
     };
-    const updatedData = [...currentData, newTrait];
+    const updatedData = [...data.data, newTrait];
 
     await setDoc(
       userRef,
@@ -41,6 +39,7 @@ function CharacterDataPopup({ visible, onClose, data, optionselected }) {
     // Clear the input fields after submission
     setSelectedOption('');
     setTraitName('');
+ 
 
     // Close the popup
    

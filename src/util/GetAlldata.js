@@ -1,9 +1,9 @@
-
+import  { useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./FireBase";
 
 function OtherCharacterDetails({setCharacterData, collection,collection2 }) {
-
+  useEffect(() => {
     const fetchCharacterData = async () => {
       try {
         const characterRef = doc(db, 'database', 'all', collection, collection2);
@@ -22,7 +22,7 @@ function OtherCharacterDetails({setCharacterData, collection,collection2 }) {
     };
 
     fetchCharacterData();
-
+  }, [collection, collection2]);
 
 
 }

@@ -6,7 +6,7 @@ function InventoryForm() {
 
 
   const [data, setDetails] = useState( [
-    { requirement: '', lvl: '', name: '',scaling:'',scalingType:'',effect:'',damage:'' },
+    { },
   
   ]);
 
@@ -23,7 +23,9 @@ function InventoryForm() {
     lvl:data[0].lvl,
     scaling:data[0].scaling,
     scalingType:data[0].scalingType,
-    requirement:data[0].requirement
+    requirements:data[0].requirements,
+    finaldamage:data[0].finaldamage,
+    specialscaling:data[0].specialscaling
   };
 
   // Create a new array that includes the existing data and the new data entry
@@ -78,6 +80,26 @@ function InventoryForm() {
             onChange={handleInputChange}
             className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
             name="name"
+            required
+          />
+        </div>
+        <div className="mb-4 w-[200px]">
+          <label className="text-[#D6E6F6] ml-[5%]">Special Scaling:</label>
+          <input
+            value={data.specialscaling}
+            onChange={handleInputChange}
+            className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
+            name="specialscaling"
+            required
+          />
+        </div>
+        <div className="mb-4 w-[200px]">
+          <label className="text-[#D6E6F6] ml-[5%]">FinalDamage</label>
+          <input
+            value={data.finaldamage}
+            onChange={handleInputChange}
+            className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
+            name="finaldamage"
             required
           />
         </div>
@@ -136,12 +158,12 @@ function InventoryForm() {
           />
         </div>
         <div className="mb-4 w-[200px]">
-          <label className="text-[#D6E6F6] ml-[5%]">Requirement</label>
+          <label className="text-[#D6E6F6] ml-[5%]">Requirements</label>
           <input
-            value={data.requirement}
+            value={data.requirements}
             onChange={handleInputChange}
             className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
-            name="requirement"
+            name="requirements"
             required
           />
         </div>

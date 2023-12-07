@@ -1,26 +1,26 @@
 /* eslint-disable no-unused-vars */
 
-import React, {  useState } from 'react';
-import CharacterDetails from '../util/GetData';
+import React, {  useEffect, useState } from 'react';
+import CharacterDetails, { GetCharacterDetails } from '../util/GetData';
 import { doc,  setDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';
 
 function Roleplay() {
-  let dataFetched = false;
   const [inputMode, setInputMode] = useState(false);
   const [data, setData] = useState([]);
+  const [dataFetched, setIsDataFetched] = useState(false);
+
  ///////////////////put into database
- const { currentPlayer } = useCurrentPlayer();
+ const { currentPlayer,currentGroup } = useCurrentPlayer();
 
   async function handleAmountChange(valueIndex, value, itemKey) {
     const userRef = doc(
       db,
       'database',
+      'groups',currentGroup,
      currentPlayer,
       'character',
-      'character',
-      'details',
       'roleplay'
     );
     
@@ -35,19 +35,30 @@ function Roleplay() {
     await setDoc(userRef, updatedData, { merge: true });
   }
  /////////////////// get from database
-  if (!dataFetched) {
-    dataFetched = true;
-    const fetchCharacterDataIfNeeded = async () => {
-      const result = await CharacterDetails({
-        database: 'database',
+  useEffect(() => {
+    GetCharacterDetails({
         user: currentPlayer,
         collection: 'roleplay',
-        setCharacterData: setData,
-      });
-    };
-    fetchCharacterDataIfNeeded();
-  }
-
+        group:currentGroup
+      }).then(result=>{
+        if(result){
+        setData(result)
+        setIsDataFetched(true)
+      }else{
+        setData( {
+          t2: [ '', '', '', '', '', '', '' ],
+          t1:  [ '', '', '', '', '', '', '' ],
+          t5: [ '', '', '', '', '', '', '' ],
+          t4:  [ '', '', '', '', '', '', '' ],
+          t6:  [ '', '', '', '', '', '', '' ],
+          t3: [ '', '', '', '', '', '', '' ],
+          t7: [ '', '', '', '', '', '', '' ]
+        })
+        setIsDataFetched(true)
+      }}
+      )
+     }, [currentPlayer])
+  
 
   let newData = Object.keys(data).map((key) => {
     return { key, value: data[key] };
@@ -69,6 +80,8 @@ function Roleplay() {
       <h1 className='text-2xl text-center'>Roleplay stats</h1>
       <div className='flex gap-[6.6%] pl-[15%]'>
         <h1 className=' text-[60%] '>Vitqsd</h1>
+        {console.log("role")}
+
         <h1 className=' text-[60%] '>Vitqsd</h1>
         <h1 className=' text-[60%] '>Vitqsd</h1>
         <h1 className=' text-[60%] '>Vitqsd</h1>

@@ -6,7 +6,7 @@ function InventoryForm() {
 
 
   const [data, setDetails] = useState( [
-    {  lvl: '',amount:'', name: '',hitchance:'',usages:'',effect:'',scaling:'',type:'',element:'' },
+    {  },
   
   ]);
 
@@ -25,7 +25,12 @@ function InventoryForm() {
     hitchance:data[0].hitchance,
     element:data[0].element,
     usages:data[0].usages,
-    effect:data[0].effect
+    effect:data[0].effect,
+    basedamage:data[0].basedamage,
+    scalingdamage:data[0].scalingdamage,
+    sum:data[0].sum,
+    alternatedamage:data[0].alternatedamage,
+    alternatedamage2:data[0].alternatedamage2
 
   };
 
@@ -36,7 +41,8 @@ function InventoryForm() {
   
   // Update the state with the new data
   setDetails(updatedData);
- 
+  console.log(newDataEntry)
+  console.log(updatedData)
   // Update the Firestore document with the merged data
   await setDoc(
     userRef,
@@ -47,7 +53,7 @@ function InventoryForm() {
     },
     { merge: true }
   );
-
+  
   // Clear the form fields
   
 };
@@ -57,8 +63,8 @@ function InventoryForm() {
 
   // Create a new data object by spreading the previous data
   const updatedData = [...data];
- 
-  // Update the relevant field in the data object based on the input name
+  console.log(value)
+  console.log(name)  // Update the relevant field in the data object based on the input name
   updatedData[0] = {
     ...updatedData[0],
     [name]: value,
@@ -71,7 +77,7 @@ function InventoryForm() {
   
   return (
     <div className="w-[50%]">
-      <h1 className="text-6xl text-center text-[#D6E6F6]">CardSpirits</h1>
+      <h1 className="text-6xl text-center text-[#D6E6F6]">Skills and Spells </h1>
       <form onSubmit={handleSubmit}>
 
         <div className="mb-4 w-[200px]">
@@ -81,6 +87,56 @@ function InventoryForm() {
             onChange={handleInputChange}
             className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
             name="name"
+            required
+          />
+        </div>
+        <div className="mb-4 w-[200px]">
+          <label className="text-[#D6E6F6] ml-[5%]">Base damage:</label>
+          <input
+            value={data.basedamage}
+            onChange={handleInputChange}
+            className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
+            name="basedamage"
+            required
+          />
+        </div>
+        <div className="mb-4 w-[200px]">
+          <label className="text-[#D6E6F6] ml-[5%]">Scaling damage:</label>
+          <input
+            value={data.scalingdamage}
+            onChange={handleInputChange}
+            className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
+            name="scalingdamage"
+            required
+          />
+        </div>
+        <div className="mb-4 w-[200px]">
+          <label className="text-[#D6E6F6] ml-[5%]">Sum:</label>
+          <input
+            value={data.sum}
+            onChange={handleInputChange}
+            className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
+            name="sum"
+            required
+          />
+        </div>
+        <div className="mb-4 w-[200px]">
+          <label className="text-[#D6E6F6] ml-[5%]">Alternate damage:</label>
+          <input
+            value={data.alternatedamage}
+            onChange={handleInputChange}
+            className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
+            name="alternatedamage"
+            required
+          />
+        </div>
+        <div className="mb-4 w-[200px]">
+          <label className="text-[#D6E6F6] ml-[5%]">Alternate damage2:</label>
+          <input
+            value={data.alternatedamage2}
+            onChange={handleInputChange}
+            className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
+            name="alternatedamage2"
             required
           />
         </div>

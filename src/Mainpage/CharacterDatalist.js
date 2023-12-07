@@ -1,51 +1,35 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import TraitAndForm from './TraitAndForm';
-import CharacterDetails from '../util/GetData';
+import  { GetCharacterDetails } from '../util/GetData';
 import { useCurrentPlayer } from '../util/Context';
 
 function CharacterDataList({ optionselected }) {
   const [popupVisible, setPopupVisible] = useState(false);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { currentPlayer } = useCurrentPlayer();
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
     // Fetch data based on the selected option
-    const fetchData = async () => {
-      let collection = '';
-      switch (optionselected) {
-        case 'traits':
-          collection = 'traits';
-          break;
-        case 'weakness':
-          collection = 'weakness';
-          break;
-        case 'strength':
-          collection = 'strength';
-          break;
-        default:
-          break;
-      }
+  
+   
+       console.log(data)
+       useEffect(() => {
+        GetCharacterDetails({
+            user: currentPlayer,
+            group:currentGroup,
+            collection: optionselected,
+          }).then(result=>{
+            if(result){
+            setData(result)
+            setIsLoading(false)
+          }else{
+            setData({data: [
+              { name: '', option: '' }]})
+              setIsLoading(false)
 
-      if (collection) {
-        const characterData = await CharacterDetails({
-          database: 'database',
-          user: currentPlayer,
-          collection: collection,
-          setCharacterData:setData
-        });
-      
-      
-      }
-    };
-
-    
-      fetchData();
-      useEffect(()=>{
-        if (data.data!==undefined){
-          setIsLoading(false);
-     }
-       },[data.data])
-
+          }}
+          )
+         }, [currentGroup, currentPlayer, optionselected,popupVisible])
  
  return (
   <div className='h-[80%] overflow-scroll overflow-x-hidden scrollbar relative'>

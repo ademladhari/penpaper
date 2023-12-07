@@ -1,50 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import InventoryAmounts from '../Mainpage/InventoryAmount';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../util/FireBase';
 import { FaPlus } from 'react-icons/fa';
 import OtherCharacterDetails from '../util/GetAlldata';
+import { useCurrentPlayer } from '../util/Context';
 
 
 function Inventory() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState({ data: [] });
   const [hide,setHide]= useState(false)
   const [searchQueryCard, setSearchQueryCard] = useState('');
   const [SearchData,setSearchData]=useState([])
   const [inputMode, setInputMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredItems, setFilteredItems] = useState([]); // State for filtered items
-  const userRef = doc(db, 'database', 'player1', 'inventory', 'inventory');
+  const { currentPlayer,currentGroup } = useCurrentPlayer();
+
+  const [filteredItems, setFilteredItems] = useState([
+  ]); // State for filtered items
+  const userRef = doc(db, 'database','groups',currentGroup, currentPlayer, 'inventory', 'inventory');
+
   OtherCharacterDetails({setCharacterData:setSearchData,collection:'inventory',collection2:'inventory'})
+useEffect(()=>{
+setIsLoading(false)
+},[currentPlayer])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRef = doc(db, 'database', 'player1', 'inventory', 'inventory');
+
         const userSnap = await getDoc(userRef);
 
-        if (userSnap.exists()) {
+        if (userSnap.data().data) {
+          console.log('here')
           const newData = userSnap.data();
           setItems(newData);
+          setFilteredItems(newData.data)
+          console.log(newData.data)
+
         } else {
           console.log('Document does not exist');
+          setFilteredItems([])
+          setItems({ data: [] })
         }
       } catch (error) {
+      
+
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPlayer, currentGroup]);
 
   useEffect(() => {
-    if (items.data !== undefined) {
+    console.log(filteredItems)
+    if (filteredItems.length!==0) {
       setIsLoading(true);
-      setFilteredItems(items.data); 
-      // Initialize filtered items with fetched data
+    }else{
+      setIsLoading(false)
     }
-  }, [items]);
+  }, [filteredItems,currentPlayer]);
 
   const location = useLocation();
   useEffect(() => {
@@ -79,6 +97,7 @@ function Inventory() {
 
   // Function to filter items based on the search query
   const filterItems = (query) => {
+ 
     const filtered = items.data.filter((item) => {
       // You can customize the search criteria here.
       const itemText = `${item.name} ${item.effect}`.toLowerCase();
@@ -90,10 +109,24 @@ function Inventory() {
     setSearchQueryCard(event.target.value);
   };
   const handleAddData=(item)=>{
-    const updatedItems = [...items.data, item];
-setFilteredItems(updatedItems)
-    updateDoc(userRef, { data: updatedItems })
-   }
+    
+    if (items.data.length===0){
+      const updatedItems = [item];
+      setFilteredItems(updatedItems)
+      setItems({data:updatedItems})
+
+      setDoc(userRef, { data: item },{merge:true})
+   
+    }
+    else{
+     
+      const updatedItems = [...items.data, item];
+      setFilteredItems(updatedItems)
+      setItems({data:updatedItems})
+          setDoc(userRef, { data: updatedItems },{merge:true})
+         }
+        
+    }
    const filteredItemsCard = Object.keys(SearchData).length >0
    ?
     SearchData.data.filter((item) => {
@@ -103,6 +136,10 @@ setFilteredItems(updatedItems)
        return itemText.includes(searchQueryCard.toLowerCase());
      })
    : [];
+
+
+
+   
  
   
   return (
@@ -133,7 +170,7 @@ setFilteredItems(updatedItems)
               </div>
 
               <div className="mt-4 h-60 overflow-y-auto scrollbar scrollbar-thumb-yellow scrollbar-track-gray-300">
-            
+          
               {filteredItemsCard.map((item) => (
         <div
         key={item}
@@ -180,8 +217,9 @@ setFilteredItems(updatedItems)
           </div>
 
           <div className="overflow-scroll h-[75%] overflow-x-hidden scrollbar">
-          
-            {isLoading &&
+            {isLoading && filteredItems.length>0&& 
+
+            
               filteredItems.map((item, index) => (
                 
                 <div key={index+1} className="inventory pl-[3%]">
@@ -191,7 +229,7 @@ setFilteredItems(updatedItems)
                       type="text"
                       className="text-xl w-[170px] px-4 py-2 inputNoStyles"
                       value={item.amount}
-                      onlclick={(event) =>
+                      onclick={(event) =>
                         handleAmountChange(index, event.target.value)
                       }
                       onBlur={handleAmountClick}
@@ -208,22 +246,22 @@ setFilteredItems(updatedItems)
                 </div>
               ))}
           </div>
-          <div className=' h-[7%] w-[100%]  flex'>
-         <div className=' w-[50%] '>
-          <div className="dotChar1 ml-[10%] mt-[1%] ">
-          <Link to="/skills-and-spells">Skillsandspells</Link>
-        </div>
-        <div className="dotChar1 ml-[10%]">
-          <Link to="/weapons">Weapons</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-        <Link to="/card-spirits">Card Spirits</Link>
-        </div>
-        <div className="dotChar1 ml-[10%] ">
-          <Link to="/">Home</Link>
-        </div>
-        </div>
-        <div onClick={()=>{setHide(true)}} className=' h-[96%] text-3xl rounded-[50%] bg-[yellow] pt-[2.8%] pl-[3.5%] w-[9.2%] mt-[0.5%] ml-[37%]'><FaPlus></FaPlus></div>
+          <div className='  w-[100%] flex ml-[1%]  '>
+        
+         
+          <Link className="links  " to="/skills-and-spells">Skillsandspells</Link>
+       
+        
+          <Link className="links  " to="/character">Home</Link>
+       
+    
+          <Link className="links  " to="/card-spirits">Card Spirits</Link>
+   
+   
+          <Link className="links  " to="/Weapons">Weapons</Link>
+        
+        <div onClick={()=>{setHide(true)}} className=' plus-sign'><FaPlus></FaPlus></div>
+      
         
         </div>
         </div>

@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import { db } from '../util/FireBase';
 
 function DetailsForm() {
-    const [option, setoption] = useState("player1")
+    const [option, setoption] = useState("")
+    const [group, setGroup] = useState("")
     const [details, setDetails] = useState({
     alter: '',
     backstory: '',
@@ -25,17 +26,20 @@ function DetailsForm() {
     console.log(option);
    
         async function setdata(){
-        const userRef = doc(
+       try{ const userRef = doc(
             db,
             'database',
+            'groups',
+            group,
+            
             option,
             'character',
-            'character',
-            'details',
             'details',
           );
         
           const userSnap =await getDoc(userRef);
+        
+         
           await setDoc(
             userRef,
             {
@@ -44,23 +48,18 @@ function DetailsForm() {
             },
             { merge: true }
           )
+          console.log('here')
+          const sometihng=userSnap.data()
+          console.log(sometihng)
     }
-    setdata()
     
-    setDetails({
-        alter: '',
-        backstory: '',
-        blossomRank: '',
-        geburstatg: '',
-        gender: '',
-        lvl: '',
-        maxxp: '',
-        name: '',
-        rasse: '',
-        sprachen: '',
-        ursprungisas: '',
-        xp: '',
-      }) // For demonstration purposes, log the details to the console
+    catch(error){
+      console.log(error)
+    }
+  }
+    console.log('here')
+    setdata()
+   // For demonstration purposes, log the details to the console
   };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,6 +70,9 @@ function DetailsForm() {
   };
   const handleSelectChange = (e) => {
     setoption(e.target.value);
+};
+const handleSelectChangegroup = (e) => {
+  setGroup(e.target.value);
 };
 
   return (
@@ -187,17 +189,24 @@ function DetailsForm() {
                 name="xp"
                 required  />
             </div>
-            <select
-                            value={option}
-                            onChange={handleSelectChange}
-                            className="w-[10%] p-[0.3%] ml-[1%] bg-[#8a9ac6]"
-                        >
-                            <option value="player1">Player 1</option>
-                            <option value="player2">Player 2</option>
-                            <option value="player3">Player 3</option>
-                            <option value="player4">Player 4</option>
-                            <option value="player5">Player 5</option>
-                        </select>
+            <div className="mb-4 w-[200px]">
+              <label className="text-[#D6E6F6] ml-[5%]">player:</label>
+              <input
+                value={option}
+                onChange={handleSelectChange}
+                className="bg-[#8a9ac6] ml-[10%]   p-2 rounded"
+                name="player"
+                required  />
+            </div>
+            <div className="mb-4 w-[200px]">
+              <label className="text-[#D6E6F6] ml-[5%]">group:</label>
+              <input
+                value={group}
+                onChange={handleSelectChangegroup}
+                className="bg-[#8a9ac6] ml-[10%]   p-2 rounded"
+                name="group"
+                required  />
+            </div>
            <button type="submit" className="bg-[#5757cb] text-[#D6E6F6] ml-[1%] p-2 rounded mt-4">
           Submit
         </button>

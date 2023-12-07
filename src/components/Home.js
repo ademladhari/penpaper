@@ -2,7 +2,7 @@
 import '../App.css';
 // useHistory needed or it won't work 
 // eslint-disable-next-line no-unused-vars
-import { BrowserRouter as   useHistory ,useLocation, useNavigate } from 'react-router-dom';
+import { Link, BrowserRouter as   useHistory ,useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react'
 import Roleplay from '../Mainpage/Roleplay';
 import VitalStats from '../Mainpage/VitalStats';
@@ -10,63 +10,81 @@ import TraitsAnd from '../Mainpage/TraitsAnd';
 import Stats from '../Mainpage/Stats';
 import HobbiesAnd from '../Mainpage/HobbiesAnd';
 import NameInfo from '../Mainpage/NameInfo';
-import CharacterDetails from '../util/GetData'; 
+import { GetCharacterDetails } from '../util/GetData'; 
 import SpiritsComponent from '../Mainpage/Spirit';
 
 import WeaponTalents from '../Mainpage/WeaponTalents';
 import { useCurrentPlayer } from '../util/Context';
+
 function Home() {
   
-  const navigate = useNavigate(); 
    const location = useLocation();
   useEffect(() => {
    
     
   }, [location.pathname]);
-  const [characterData,setCharacterData]=useState({})
   const [data,setData]=useState({hobbies:'.'})
   const [isLoading, setIsLoading] = useState(true); // Add loading state
+   
 
-
-  const { currentPlayer, setCurrentPlayer } = useCurrentPlayer();
+  const { currentPlayer, setCurrentPlayer,currentGroup,playerDivs} = useCurrentPlayer();
           
-    
-        CharacterDetails({ database: 'database', user: currentPlayer,collection:'details',setCharacterData:setCharacterData });
 
-      
-            // If characterData is available, fetch hobbiesData
-         
-            useEffect(()=>{
-              if (characterData.details !==undefined){
-              setIsLoading(false) 
-              setData(characterData.details)
-             }
-              },[characterData])
-     
-     
+  useEffect(() => {
+    GetCharacterDetails({
+        user: currentPlayer,
+        collection: 'details',
+        group:currentGroup
+      }).then(result=>{
+        if(result){
+          setIsLoading(false)
+        setData(result.details)
+      }}
+      )
+     }, [currentPlayer,currentGroup])
+  
           
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    
+
        
+  console.log(playerDivs)
         
-
+         const renderPlayers = () => {
+          const totalPlayers = playerDivs.length;
+          const gapPercentage = 1; // Adjust the gap as needed
+          const totalGapWidth = (totalPlayers - 1) * gapPercentage;
+          const widthPercentage = totalPlayers > 0 ? (80 - totalGapWidth) / totalPlayers : 0;
+        
+          return (
+            <div 
+            >
+              {playerDivs.map((player, index) => (
+                <div
+                  key={index}
+                  onClick={() => setCurrentPlayer(player)}
+                  className={` ml-[9%] h-[5%] mt-[3.5%] bg-[#263895] rounded-2xl absolute text-center text-xl`}
+                  style={{
+                    left: `${(index * widthPercentage) + (index * gapPercentage)}%`,
+                    width: `${widthPercentage}%`,
+                    marginRight: `${gapPercentage}%`,
+                  }}
+                >
+                  {player}
+                </div>
+              ))}
+            </div>
+          );
+        };
     
-    
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    
-
  
   return (
 <>
-
     <div className=" bg-[#D6E6F6] w-[100%] flex h-[100%] ">
-    <div onClick={()=>{setCurrentPlayer('player1')}} className=' h-[7%] w-[15%] mt-[2.5%] bg-[#263895] rounded-2xl  absolute left-[9%]'>azd</div>
-    <div onClick={()=>{setCurrentPlayer('player2')}}className=' h-[5%] w-[15%] mt-[3.5%] bg-[#263895] rounded-2xl  absolute left-[24.5%]'>zad</div>
-    <div onClick={()=>{setCurrentPlayer('player3')}} className=' h-[5%] w-[15%] mt-[3.5%] bg-[#263895] rounded-2xl  absolute left-[40%]'>azd</div>
-    <div onClick={()=>{setCurrentPlayer('player4')}}  className=' h-[5%] w-[15%] mt-[3.5%] bg-[#263895] rounded-2xl  absolute left-[55.5%]'>azd</div>
-    <div onClick={()=>{setCurrentPlayer('player5')}} className=' h-[5%] w-[15%] mt-[3.5%] bg-[#263895] rounded-2xl  absolute left-[71%]'>azd</div>
-    
+    {renderPlayers()}
     <div className='bg-[#263895] m-auto  w-[85%] mt-[5%] rounded-[2%] mb-[5%] pb-[3%]  xl:h-[2200px] lg:h-[1300px]  '>
+    
+    
+    
        <div className='section1 w-[50%]   h-[50%] flex flex-col flex-wrap  '>
         <NameInfo />
       
@@ -121,29 +139,26 @@ function Home() {
        </div>  
        </div>
        </div>
-       <div className=' w-[55%] pt-[6.5%]  h-[50%]'>
+       <div className=' w-[50%] pt-[6.5%]  h-[50%]'>
       <SpiritsComponent></SpiritsComponent>
-      <div >
-      <div className="dotChar2 ml-[10%] mt-[5%]" >
-      <button onClick={() => navigate("/skills-and-spells") }>
-        Skills and Spells
-      </button>
-    </div>
-    <div className="dotChar2 ml-[10%] mt-[5%]">
-      <button onClick={() => navigate("/weapons")}>
-        Weapons
-      </button>
-    </div>
-    <div className="dotChar2 ml-[10%] mt-[5%]">
-      <button onClick={() => navigate("/card-spirits")}>
-        Card Spirits
-      </button>
-    </div>
-    <div className="dotChar2 ml-[10%] ">
-      <button onClick={() => navigate("/inventory")}>
-        Inventory
-      </button>
-    </div>
+      <div >    
+    <div className=' mt-[5%]  w-[100%] flex ml-[1%]  '>
+        
+         
+        <Link className="links  " to="/skills-and-spells">Skillsandspells</Link>
+     
+      
+        <Link className="links  " to="/weapons">Weapons</Link>
+     
+  
+        <Link className="links  " to="/card-spirits">Card Spirits</Link>
+ 
+ 
+        <Link className="links  " to="/inventory">Inventory</Link>
+      
+    
+      
+      </div>
         </div>
        </div> 
     </div>
