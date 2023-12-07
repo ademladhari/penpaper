@@ -58,7 +58,7 @@ function Stats2() {
         setIsDataFetched(true)
       }}
       )
-     }, [currentPlayer])
+     }, [currentPlayer,currentGroup])
   
 
   function replaceEmptyWithZero(data) {

@@ -47,7 +47,7 @@ const SpiritsComponent = () => {
             { name: '', description: '', icon: '' }]})
       }}
       )
-     }, [currentPlayer])
+     }, [currentGroup, currentPlayer])
   
         const handleAddData=(item)=>{
           const updatedItems = [...spiritsData.data, item];

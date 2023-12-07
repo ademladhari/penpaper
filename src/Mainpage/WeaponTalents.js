@@ -46,7 +46,7 @@ const WeaponTalents = () => {
             { name: '', description: '', icon: '' }]})
       }}
       )
-     }, [currentPlayer])
+     }, [currentPlayer,currentGroup])
         const handleAddData=(item)=>{
           const updatedItems = [...weaponData.data, item];
           setWeaponData({ data: updatedItems });

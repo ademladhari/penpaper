@@ -48,7 +48,7 @@ GetCharacterDetails({
     setVitalStatsData(result)
   }}
   )
- }, [currentPlayer])
+ }, [currentPlayer,currentGroup])
  
 
   function replaceEmptyWithZero(data) {

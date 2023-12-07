@@ -24,7 +24,7 @@ function YourComponent() {
       
       }}}
       )
-     }, [ currentPlayer])
+     }, [currentGroup, currentPlayer])
 
 
   

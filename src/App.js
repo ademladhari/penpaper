@@ -9,8 +9,7 @@ import CardSpirits from './components/CardSpirits';
 import {  CurrentPlayerContext } from './util/Context'; // Import from the separate module
 import Players from './players';
 import FormPage from './Form/FormPage'
-import Login from './components/Login'
-import SignUp from './components/SignUp';
+
 import { AuthContextProvider } from './context/AuthContext';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './util/FireBase';
@@ -34,8 +33,9 @@ function App() {
     console.log(querySnapshot.docs)
     querySnapshot.docs.forEach((doc) => (  
      
-        array.push(doc.id), console.log(doc.id)    
-       
+        array.push(doc.id)
+     
+    
      
         
     ));
@@ -97,12 +97,7 @@ function App() {
 
       <div className="App"> 
       <Players />
-      <SignUp
-         
-        ></SignUp>
-        <Login
-       
-        ></Login>
+ 
         <Routes>
           {console.log(currentPlayer)}
       

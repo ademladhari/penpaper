@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc,  setDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { db } from '../util/FireBase';
 import { useCurrentPlayer } from '../util/Context';

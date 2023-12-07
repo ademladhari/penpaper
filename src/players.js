@@ -17,6 +17,7 @@ function Players() {
     
   ];
 
+  // eslint-disable-next-line no-unused-vars
   let leng=iconsData.length
 
   

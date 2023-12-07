@@ -273,7 +273,7 @@ Reset
         <Link className="links  " to="/skills-and-spells">Skillsandspells</Link>
      
       
-        <Link className="links  " to="/character">Home</Link>
+        <Link className="links  " to="/">Home</Link>
      
   
         <Link className="links  " to="/weapons">Weapons</Link>

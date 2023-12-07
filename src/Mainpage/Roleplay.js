@@ -57,7 +57,7 @@ function Roleplay() {
         setIsDataFetched(true)
       }}
       )
-     }, [currentPlayer])
+     }, [currentGroup, currentPlayer])
   
 
   let newData = Object.keys(data).map((key) => {
