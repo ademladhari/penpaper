@@ -99,7 +99,6 @@ function App() {
       <Players />
  
         <Routes>
-          {console.log(currentPlayer)}
       
           <Route exact path="/" element={<Home />} />
       <Route path="/skills-and-spells" element={<SkillsAndSpells  />} />

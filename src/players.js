@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { FaFacebook, FaWhatsapp, FaTwitter, FaReddit, FaLinkedin } from 'react-icons/fa';
 import { useCurrentPlayer } from './util/Context';
+import { Link } from 'react-router-dom';
 
 function Players() {
       const [isOpen, setIsOpen] = useState(false);
@@ -20,15 +21,15 @@ function Players() {
   // eslint-disable-next-line no-unused-vars
   let leng=iconsData.length
 
-  
-  const toggleMenu = () => {
+ 
+  /*const toggleMenu = () => {
     setIsOpen(!isOpen); // Toggle the isOpen state
   };
-  
+  */
   return (
     <div className={`menu ${isOpen ? 'active' : ''}`}>
            <div className="toggle" >
-            <button onClick={toggleMenu}>Players</button>              </div>
+            <button > <Link to="/character-creation">Add</Link></button>              </div>
             <ul>
              {iconsData.map((icon, index) => (
               

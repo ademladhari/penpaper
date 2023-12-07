@@ -119,12 +119,13 @@ function InventoryForm() {
         </div>
 
         <div className="mb-4 w-[200px]">
-          <label className="text-[#D6E6F6] ml-[5%]">amount</label>
+          <label className="text-[#D6E6F6] ml-[5%] ">amount</label>
           <input
             value={data.amount}
             onChange={handleInputChange}
             className="bg-[#8a9ac6] ml-[10%] p-2 rounded"
             name="amount"
+
             required
           />
         </div>

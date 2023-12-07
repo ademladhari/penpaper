@@ -156,9 +156,8 @@ function Home() {
  
         <Link className="links  " to="/inventory">Inventory</Link>
       
-    
-      
       </div>
+    
         </div>
        </div> 
     </div>
