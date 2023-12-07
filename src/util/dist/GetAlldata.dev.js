@@ -54,7 +54,7 @@ function OtherCharacterDetails(_ref) {
       }, null, null, [[0, 8]]);
     };
 
-    fetchCharacterData();
+    fetchCharacterData(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection, collection2]);
 }
 

@@ -22,6 +22,7 @@ function OtherCharacterDetails({setCharacterData, collection,collection2 }) {
     };
 
     fetchCharacterData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collection, collection2]);
 
 
