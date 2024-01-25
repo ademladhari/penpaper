@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { FaFacebook, FaWhatsapp, FaTwitter, FaReddit, FaLinkedin } from 'react-icons/fa';
-import { useCurrentPlayer } from './util/Context';
+import { useCurrentPlayer } from './context/Context';
 import { Link } from 'react-router-dom';
 
 function Players() {
-      const [isOpen] = useState(false);
-      const { setCurrentPlayer } = useCurrentPlayer();
+  const [isOpen, setIsOpen] = useState(false);
+  const { setCurrentPlayer } = useCurrentPlayer();
 
     const marginBottomValues = [0, 0, 0, 0, 0,0]
   const iconsData = [
@@ -22,14 +22,14 @@ function Players() {
   let leng=iconsData.length
 
  
-  /*const toggleMenu = () => {
+  const toggleMenu = () => {
     setIsOpen(!isOpen); // Toggle the isOpen state
   };
-  */
+
   return (
     <div className={`menu ${isOpen ? 'active' : ''}`}>
            <div className="toggle" >
-            <button > <Link to="/character-creation">Add</Link></button>              </div>
+           <button onClick={toggleMenu}>Players</button>              </div>
             <ul>
              {iconsData.map((icon, index) => (
               

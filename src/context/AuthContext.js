@@ -1,6 +1,6 @@
 import { useContext, createContext, useEffect, useState } from "react";
 import { signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, } from "firebase/auth";
-import { auth, db } from '../util/FireBase';
+import { auth, db } from '../getdata/FireBase';
 import { setDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useRef } from "react";
 
@@ -11,28 +11,25 @@ export const AuthContextProvider = ({ children }) => {
   const exercisesSectionRef = useRef();
   const aboutSectionRef = useRef();
   const contactSectionRef = useRef();
-  const SECRET_KEY = "your_secret_key_here"; // Replace with your actual secret key
 
 
-  const login = async (email, password,secretKey) => {
+  const login = async (email, password) => {
     try {
-      if (secretKey !== SECRET_KEY) {
-        setError('Invalid secret key');
-        return;
-      }
-      console.log('here')
+      console.log('here');
       const authResult = await signInWithEmailAndPassword(auth, email, password);
-      const user = authResult.user;
+      const loggedInUser = authResult.user;
       console.log('Successfully logged in with email and password');
-      // Set the "remember me" persistence mode based on the checkbox value
-     
       
-      setUser(user);
+      // Store user data in local storage
+      localStorage.setItem('user', JSON.stringify(loggedInUser));
+      
+      setUser(loggedInUser);
     } catch (error) {
       setError('Error logging in with email and password');
       console.log(error.code);
     }
   };
+ 
 
   const signup = async (userData) => {
     try {
@@ -65,7 +62,12 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const logOut = () => {
-    signOut(auth);
+    signOut(auth).then(() => {
+      localStorage.removeItem('user');
+      // Any additional cleanup or actions after logging out can be added here
+    }).catch((error) => {
+      console.error('Error signing out:', error);
+    })
   };
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{  signup, login, logOut, user, error,exercisesSectionRef,contactSectionRef,aboutSectionRef }}>
+    <AuthContext.Provider value={{  signup, login, logOut, user,setUser, error}}>
       {children}
     </AuthContext.Provider>
   );

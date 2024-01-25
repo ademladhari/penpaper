@@ -1,21 +1,24 @@
 // App.js
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import the correct components
-import Home from './components/Home'; // Import your Home component here
-import SkillsAndSpells from './components/SkillsAndSpells';
-import Inventory from './components/Inventory';
-import Weapons from './components/Weapons';
-import CardSpirits from './components/CardSpirits';
-import {  CurrentPlayerContext } from './util/Context'; // Import from the separate module
+import Home from './pages/Home'; // Import your Home component here
+import SkillsAndSpells from './pages/SkillsAndSpells';
+import Inventory from './pages/Inventory/Inventory';
+import Weapons from './pages/Weapons';
+import CardSpirits from './pages/CardSpirits';
+import {  CurrentPlayerContext } from './context/Context'; // Import from the separate module
 import Players from './players';
-import FormPage from './Form/FormPage'
-
+import FormPage from './Addingdata/FormPage'
+import Login from './pages/Login'
+import SignUp from './pages/SignUp';
 import { AuthContextProvider } from './context/AuthContext';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from './util/FireBase';
+import {  db } from './getdata/FireBase';
+import Landingpage from './pages/landingpage/Landingpage';
 function App() {
   const [show, setShow] = useState(false);
   const [showLogin, setShowLogin] = useState(true);
+ 
 
   const [currentPlayer, setCurrentPlayer] = useState(() => {
     const storedPlayer = localStorage.getItem('currentPlayer');
@@ -33,9 +36,9 @@ function App() {
     console.log(querySnapshot.docs)
     querySnapshot.docs.forEach((doc) => (  
      
-        array.push(doc.id)
-     
-    
+        // eslint-disable-next-line no-sequences
+        array.push(doc.id) 
+       
      
         
     ));
@@ -77,7 +80,6 @@ function App() {
     setCurrentGroup(newGroup);
     localStorage.setItem('currentGroup', newGroup);
   };
-  
 
   return (
     <CurrentPlayerContext.Provider
@@ -97,11 +99,13 @@ function App() {
 
       <div className="App"> 
       <Players />
- 
+      <SignUp/>
+         <Login/>
         <Routes>
-      
-          <Route exact path="/" element={<Home />} />
+          <Route  exact  path ="/" element={<Landingpage></Landingpage>} ></Route>
+          <Route path="/home" element={<Home />} />
       <Route path="/skills-and-spells" element={<SkillsAndSpells  />} />
+
       <Route path="/character-creation" element={< FormPage />} />
         <Route path="/weapons" element={<Weapons />} />
         <Route path="/card-spirits" element={<CardSpirits />} />
